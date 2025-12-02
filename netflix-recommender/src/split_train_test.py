@@ -19,12 +19,14 @@ for user_id in range(sparse_lil.shape[0]):
         if rating > 0
     ]
 
+    leaveOut = 5
+
     # Need at least 2 to split
-    if len(rated_movies) < 10:
+    if len(rated_movies) < leaveOut*5:
         continue
 
     # Randomly select 2 test movies
-    test_movies = np.random.choice(rated_movies, size=3, replace=False)
+    test_movies = np.random.choice(rated_movies, size=leaveOut, replace=False)
 
     # Fill train and test matrices
     for movie, rating in zip(sparse_lil.rows[user_id], sparse_lil.data[user_id]):

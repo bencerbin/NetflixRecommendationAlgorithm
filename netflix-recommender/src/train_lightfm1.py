@@ -10,7 +10,7 @@ model = LightFM(loss='warp')  # WARP loss is popular for implicit feedback
 
 # 2. Fit the model
 # train_matrix is sparse, CSR is ideal
-model.fit(train_matrix, item_features=item_features, epochs=50, num_threads=4)
+model.fit(train_matrix, epochs=50, num_threads=4)
 
 # 3. Make predictions
 # LightFM predicts "score" for user-item pairs
@@ -40,9 +40,9 @@ print(f"User {user_id}, Movie {item_id}, Predicted score: {score[0]:.3f}, Actual
 """
 
 from lightfm.evaluation import precision_at_k, auc_score, recall_at_k
-print("train precision: ", precision_at_k(model, train_matrix, item_features=item_features, k=5).mean())
-print("test precision: ", precision_at_k(model, test_matrix, item_features=item_features, train_interactions=train_matrix, k=5).mean())
-print("AUC:", auc_score(model, test_matrix, item_features=item_features, train_interactions=train_matrix).mean())
+print("train precision: ", precision_at_k(model, train_matrix, k=5).mean())
+print("test precision: ", precision_at_k(model, test_matrix, train_interactions=train_matrix, k=5).mean())
+print("AUC:", auc_score(model, test_matrix, train_interactions=train_matrix).mean())
 
 
 
