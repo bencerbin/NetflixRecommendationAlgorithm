@@ -1,54 +1,46 @@
 from interaction_matrix import interaction_matrix, sparse_matrix
 import numpy as np
-from scipy.sparse import lil_matrix
+from scipy.sparse import lil_matrix, csr_matrix
 
-
+# Convert original sparse matrix to LIL for easy row access
 sparse_lil = sparse_matrix.tolil()
 
+# Initialize empty train/test matrices
 train_matrix = lil_matrix(sparse_matrix.shape)
 test_matrix = lil_matrix(sparse_matrix.shape)
 
-np.random.seed(42)
+np.random.seed(33)
 
 for user_id in range(sparse_lil.shape[0]):
 
-    rated_movies = sparse_lil.rows[user_id]
+    # Movies the user actually rated (rating > 0)
+    rated_movies = [
+        movie for movie, rating in zip(sparse_lil.rows[user_id], sparse_lil.data[user_id])
+        if rating > 0
+    ]
 
-    if(len(rated_movies)) < 2:
-
+    # Need at least 2 to split
+    if len(rated_movies) < 10:
         continue
 
+    # Randomly select 2 test movies
+    test_movies = np.random.choice(rated_movies, size=3, replace=False)
 
-    test_movies = np.random.choice(rated_movies, size=2, replace=False)
+    # Fill train and test matrices
+    for movie, rating in zip(sparse_lil.rows[user_id], sparse_lil.data[user_id]):
+        if rating == 0:
+            continue  # skip non-interactions
 
-    for movie in rated_movies:
-        rating = sparse_lil[user_id, movie]
         if movie in test_movies:
             test_matrix[user_id, movie] = rating
         else:
             train_matrix[user_id, movie] = rating
-            
 
-# Now you can use interaction_matrix or sparse_matrix directly
-# print(interaction_matrix.shape)
-# print(sparse_matrix.shape)
+# Convert to CSR (required by LightFM)
+train_matrix = train_matrix.tocsr()
+test_matrix = test_matrix.tocsr()
 
+# Optional debug prints
+# print(train_matrix.shape, test_matrix.shape)
 
-# for user_id in range(sparse_lil.shape[0]):
-
-#     print(train_matrix.rows[user_id])
-
-
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-
-# plt.figure(figsize=(8, 6))
-# sns.heatmap(train_matrix[:50, :50].toarray(), cmap="viridis")
-# plt.title("Train Matrix Heatmap (first 50 users/movies)")
-# plt.show()
-
-# plt.figure(figsize=(8, 6))
-# sns.heatmap(test_matrix[:50, :50].toarray(), cmap="magma")
-# plt.title("Test Matrix Heatmap (first 50 users/movies)")
-# plt.show()
 
