@@ -15,7 +15,10 @@ movieIds = interaction_matrix.columns.tolist()
 movieId_to_index = {mid: i for i, mid in enumerate(movieIds)}
 
 # ----------------------------------------------------------
-# 1. GENRE FEATURES
+# GENRE FEATURES
+# 
+#   Builds a genre matrix (as in feature_matrix.py) and a TF_IDF tag matrix, then combines the two
+#
 # ----------------------------------------------------------
 
 def build_genre_feature_matrix(movieId_to_index, movies):
@@ -23,7 +26,7 @@ def build_genre_feature_matrix(movieId_to_index, movies):
     Builds a genre-based item feature matrix (num_movies x num_genres).
     """
 
-    # Build genre vocabulary
+    # Build genre set
     genre_set = set()
     for genres in movies["genres"]:
         for g in genres.split("|"):

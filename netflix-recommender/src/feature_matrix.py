@@ -5,6 +5,7 @@ from scipy.sparse import lil_matrix, csr_matrix
 # Import interaction_matrix so we align with its movie ordering
 from interaction_matrix import interaction_matrix
 
+#LOAD IN MOVIES CSV FILE
 movies = pd.read_csv('/Users/bencerbin/NetflixRecommendationAlgorithm/netflix-recommender/data/movies.csv')  # adjust path
 
 """
@@ -14,12 +15,15 @@ Returns:
     movieId_to_index: mapping for consistency checks
 """
 
-matrixIds = interaction_matrix.columns.tolist()
 
+#ENSURE THAT MOVIES ARE BEING PROCESSED IN THE EXACT ORDER AS IN THE INTERACTION MATRIX 
+matrixIds = interaction_matrix.columns.tolist()
 movieId_to_index = {mid: i for i, mid in enumerate(matrixIds)}
 
 genre_set = set()
 
+
+#PROCESS GENRES IN RAW CSV FILE, ADD TO GENRE SET
 for genres in movies["genres"]:
     for g in genres.split("|"):
         if g != "(no genres listed)":   #make null
@@ -34,6 +38,8 @@ genre_to_col = {g: i for i, g in enumerate(genre_list)}
 
 feature_matrix = lil_matrix((num_movies, num_genres), dtype=np.float32)
 
+
+#ITERATE OVER MOVIES IN CSV FILE 
 for _, row in movies.iterrows():
     mid = row["movieId"]
 

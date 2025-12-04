@@ -1,10 +1,11 @@
 import pandas as pd
 from scipy.sparse import csr_matrix
 
-
 ratings = pd.read_csv('/Users/bencerbin/NetflixRecommendationAlgorithm/netflix-recommender/data/ratings.csv')  # adjust path
 
-
+"""
+Build the interaction matrix architecture
+"""
 interaction_matrix = ratings.pivot(
     index='userId',      # rows = users
     columns='movieId',   # columns = movies
